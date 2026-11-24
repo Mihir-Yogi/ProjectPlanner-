@@ -17,7 +17,7 @@ Open [http://localhost:3000](http://localhost:3000).
 
 - Next.js App Router with TypeScript
 - Dashboard, Quick Idea Capture, and Guided Project Discovery page UI
-- Guided Discovery adapts its questions to the project type and uses a broad, searchable local technology catalog
+- Guided Discovery has separate idea and client paths; frontend, backend, and database choices adapt to earlier answers, and integrations follow selected features
 - Discovery answers stay in page memory only and are cleared on refresh; they are not saved or sent anywhere
 - Saving remains unavailable until frontend integration; unfinished destinations are marked as upcoming
 - The post-save choices to open a project, continue answering questions, or add another idea are deferred until saving and destinations work

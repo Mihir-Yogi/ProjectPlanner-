@@ -13,8 +13,7 @@
 
 .eyebrow,
 .questionEyebrow,
-.progressCount,
-.catalogNote {
+.progressCount {
   font-family: var(--font-ibm-plex-mono), monospace;
   font-size: 10px;
   font-weight: 500;
@@ -263,13 +262,11 @@
   opacity: 0.7;
 }
 
-.textAnswer textarea:focus-visible,
-.searchInput:focus-visible {
+.textAnswer textarea:focus-visible {
   border-color: var(--blue);
 }
 
-.textAnswer textarea::placeholder,
-.searchInput::placeholder {
+.textAnswer textarea::placeholder {
   color: var(--muted);
   opacity: 1;
 }
@@ -295,8 +292,7 @@
   font-weight: 600;
 }
 
-.multiChoiceArea,
-.technologyArea {
+.multiChoiceArea {
   display: grid;
   justify-items: start;
   gap: 14px;
@@ -362,52 +358,9 @@
   transform: translateY(-1px) rotate(-45deg);
 }
 
-.technologyArea .checkboxMark {
-  border-radius: 50%;
-}
-
-.technologyArea .multiChoice input:checked + .checkboxMark::after {
-  width: 6px;
-  height: 6px;
-  border: 0;
-  border-radius: 50%;
-  background: var(--background);
-  transform: none;
-}
-
 .multiChoice:has(input:checked) {
   border-color: var(--blue);
   background: #e6e9f4;
-}
-
-.searchLabel {
-  font-size: 12px;
-  font-weight: 600;
-}
-
-.searchInput {
-  width: 100%;
-  min-height: 46px;
-  padding: 0 13px;
-  border: 1px solid #bdb6a9;
-  border-radius: 2px;
-  background: var(--background);
-  color: var(--foreground);
-  font: inherit;
-  font-size: 13px;
-}
-
-.catalogNote {
-  color: var(--muted);
-  font-size: 9px;
-}
-
-.noResults {
-  grid-column: 1 / -1;
-  padding: 14px;
-  border: 1px dashed var(--line);
-  color: var(--muted);
-  font-size: 12px;
 }
 
 .questionFooter {
