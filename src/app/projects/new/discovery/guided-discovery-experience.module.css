@@ -1,0 +1,583 @@
+.experience {
+  display: grid;
+  gap: 30px;
+  margin-top: 20px;
+}
+
+.pageHeader {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 28px;
+}
+
+.eyebrow,
+.questionEyebrow,
+.progressCount,
+.catalogNote {
+  font-family: var(--font-ibm-plex-mono), monospace;
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.9px;
+  text-transform: uppercase;
+}
+
+.eyebrow,
+.questionEyebrow {
+  color: var(--teal);
+}
+
+.pageHeader h1 {
+  max-width: 650px;
+  margin-top: 12px;
+  font-size: clamp(38px, 4.8vw, 58px);
+  font-weight: 700;
+  letter-spacing: -3px;
+  line-height: 1.04;
+}
+
+.pageDescription {
+  max-width: 570px;
+  margin-top: 12px;
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.65;
+}
+
+.memoryNote {
+  display: flex;
+  min-width: max-content;
+  align-items: center;
+  gap: 9px;
+  padding: 11px 13px;
+  border: 1px solid var(--line);
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.memoryDot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--coral);
+}
+
+.wizard {
+  border: 1px solid var(--line);
+  background: var(--surface);
+}
+
+.progressArea {
+  padding: 20px 28px 17px;
+  border-bottom: 1px solid var(--line);
+}
+
+.progressTopline {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.progressGroups {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 22px;
+  list-style: none;
+}
+
+.progressGroup {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.groupMarker {
+  width: 8px;
+  height: 8px;
+  border: 1px solid #969a91;
+  border-radius: 50%;
+}
+
+.activeProgressGroup {
+  color: var(--foreground);
+  font-weight: 600;
+}
+
+.activeProgressGroup .groupMarker {
+  border-color: var(--blue);
+  background: var(--blue);
+}
+
+.completeProgressGroup .groupMarker {
+  border-color: var(--teal);
+  background: var(--teal);
+}
+
+.progressCount {
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+.progressTrack {
+  height: 4px;
+  margin-top: 16px;
+  background: #d7d1c5;
+}
+
+.progressTrack span {
+  display: block;
+  height: 100%;
+  background: var(--blue);
+  transition: width 180ms ease-out;
+}
+
+.pathNote {
+  margin-top: 8px;
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.question,
+.review {
+  max-width: 880px;
+  margin: 0 auto;
+  padding: 36px 44px 32px;
+}
+
+.questionHeading h2,
+.review h2 {
+  margin-top: 9px;
+  font-size: clamp(25px, 3vw, 34px);
+  font-weight: 600;
+  letter-spacing: -1.1px;
+  line-height: 1.15;
+}
+
+.questionHeading > p:last-child,
+.reviewIntro {
+  max-width: 640px;
+  margin-top: 9px;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.answerArea {
+  margin-top: 25px;
+}
+
+.choiceList {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.singleChoice {
+  display: flex;
+  min-height: 74px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 14px 16px;
+  border: 1px solid var(--line);
+  background: var(--background);
+  color: var(--foreground);
+  text-align: left;
+  cursor: pointer;
+  transition:
+    border-color 140ms ease,
+    background-color 140ms ease;
+}
+
+.singleChoice:hover,
+.selectedChoice {
+  border-color: var(--blue);
+}
+
+.selectedChoice {
+  background: #e6e9f4;
+}
+
+.choiceCopy {
+  display: grid;
+  gap: 4px;
+}
+
+.choiceTitle {
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.choiceDescription {
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+.choiceState {
+  color: var(--teal);
+  font-size: 10px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.textAnswer {
+  display: grid;
+  justify-items: start;
+  gap: 10px;
+}
+
+.textAnswer label {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.textAnswer label span {
+  color: var(--muted);
+  font-size: 10px;
+  font-weight: 400;
+}
+
+.textAnswer textarea {
+  width: 100%;
+  min-height: 125px;
+  padding: 13px 14px;
+  border: 1px solid #bdb6a9;
+  border-radius: 2px;
+  background: var(--background);
+  color: var(--foreground);
+  font: inherit;
+  font-size: 13px;
+  line-height: 1.6;
+  resize: vertical;
+}
+
+.textAnswer textarea:disabled {
+  color: var(--muted);
+  opacity: 0.7;
+}
+
+.textAnswer textarea:focus-visible,
+.searchInput:focus-visible {
+  border-color: var(--blue);
+}
+
+.textAnswer textarea::placeholder,
+.searchInput::placeholder {
+  color: var(--muted);
+  opacity: 1;
+}
+
+.notDecidedButton {
+  min-height: 34px;
+  padding: 0 10px;
+  border: 1px solid var(--line);
+  background: transparent;
+  color: var(--muted);
+  font-size: 11px;
+  cursor: pointer;
+}
+
+.notDecidedButton:hover,
+.selectedNotDecided {
+  border-color: var(--teal);
+  color: var(--teal);
+}
+
+.selectedNotDecided {
+  background: #e1ebe5;
+  font-weight: 600;
+}
+
+.multiChoiceArea,
+.technologyArea {
+  display: grid;
+  justify-items: start;
+  gap: 14px;
+}
+
+.multiChoiceList {
+  display: grid;
+  width: 100%;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.multiChoice {
+  position: relative;
+  display: flex;
+  min-height: 48px;
+  align-items: center;
+  gap: 11px;
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  background: var(--background);
+  color: var(--foreground);
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.multiChoice:focus-within {
+  outline: 3px solid var(--blue);
+  outline-offset: 3px;
+}
+
+.multiChoice input {
+  position: absolute;
+  z-index: 1;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.checkboxMark {
+  display: grid;
+  width: 16px;
+  height: 16px;
+  flex: 0 0 16px;
+  place-items: center;
+  border: 1px solid #969a91;
+  background: transparent;
+}
+
+.multiChoice input:checked + .checkboxMark {
+  border-color: var(--blue);
+  background: var(--blue);
+}
+
+.multiChoice input:checked + .checkboxMark::after {
+  width: 7px;
+  height: 4px;
+  border-bottom: 1px solid var(--background);
+  border-left: 1px solid var(--background);
+  content: "";
+  transform: translateY(-1px) rotate(-45deg);
+}
+
+.technologyArea .checkboxMark {
+  border-radius: 50%;
+}
+
+.technologyArea .multiChoice input:checked + .checkboxMark::after {
+  width: 6px;
+  height: 6px;
+  border: 0;
+  border-radius: 50%;
+  background: var(--background);
+  transform: none;
+}
+
+.multiChoice:has(input:checked) {
+  border-color: var(--blue);
+  background: #e6e9f4;
+}
+
+.searchLabel {
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.searchInput {
+  width: 100%;
+  min-height: 46px;
+  padding: 0 13px;
+  border: 1px solid #bdb6a9;
+  border-radius: 2px;
+  background: var(--background);
+  color: var(--foreground);
+  font: inherit;
+  font-size: 13px;
+}
+
+.catalogNote {
+  color: var(--muted);
+  font-size: 9px;
+}
+
+.noResults {
+  grid-column: 1 / -1;
+  padding: 14px;
+  border: 1px dashed var(--line);
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.questionFooter {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 30px;
+  padding-top: 18px;
+  border-top: 1px solid var(--line);
+}
+
+.secondaryButton,
+.continueButton {
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  padding: 0 16px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.secondaryButton {
+  border: 1px solid var(--line);
+  background: transparent;
+  color: var(--foreground);
+}
+
+.secondaryButton:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+
+.continueButton {
+  border: 1px solid var(--blue);
+  background: var(--blue);
+  color: var(--background);
+}
+
+.continueButton:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.continueButton span {
+  font-size: 16px;
+}
+
+.reviewList {
+  margin-top: 24px;
+  border-top: 1px solid var(--line);
+}
+
+.reviewRow {
+  display: grid;
+  grid-template-columns: minmax(115px, 0.32fr) minmax(0, 1fr);
+  gap: 16px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.reviewRow dt {
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.reviewRow dd {
+  min-width: 0;
+  font-size: 12px;
+  line-height: 1.55;
+  overflow-wrap: anywhere;
+}
+
+.reviewActions {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-top: 22px;
+}
+
+.textButton {
+  min-height: 44px;
+  padding: 0 10px;
+  border: 0;
+  background: transparent;
+  color: var(--teal);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.reviewNote {
+  margin-top: 16px;
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+@media (max-width: 900px) {
+  .pageHeader {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .memoryNote {
+    min-width: 0;
+  }
+}
+
+@media (max-width: 720px) {
+  .experience {
+    gap: 22px;
+  }
+
+  .pageHeader h1 {
+    letter-spacing: -2px;
+  }
+
+  .progressArea {
+    padding: 17px 20px 15px;
+  }
+
+  .progressGroups {
+    gap: 14px;
+  }
+
+  .question,
+  .review {
+    padding: 28px 24px 24px;
+  }
+}
+
+@media (max-width: 540px) {
+  .progressTopline {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .progressGroups {
+    gap: 11px;
+  }
+
+  .progressGroup {
+    gap: 6px;
+    font-size: 10px;
+  }
+
+  .choiceList,
+  .multiChoiceList {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .question,
+  .review {
+    padding: 24px 18px 20px;
+  }
+
+  .reviewRow {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 5px;
+  }
+
+  .reviewActions {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 5px;
+  }
+}

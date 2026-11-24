@@ -19,6 +19,16 @@
   padding: 28px 20px 24px;
 }
 
+.sidebarHeader {
+  display: contents;
+}
+
+.sidebarContent {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+}
+
 .brand {
   display: flex;
   align-items: center;
@@ -42,6 +52,60 @@
   font-size: 15px;
   font-weight: 700;
   letter-spacing: -0.5px;
+}
+
+.menuToggle {
+  display: none;
+}
+
+.menuIcon {
+  position: relative;
+  display: block;
+  width: 18px;
+  height: 14px;
+}
+
+.menuLine {
+  position: absolute;
+  left: 0;
+  width: 18px;
+  height: 2px;
+  background: currentColor;
+  transition:
+    top 180ms ease,
+    transform 180ms ease,
+    opacity 120ms ease;
+}
+
+.menuLine:first-child {
+  top: 0;
+}
+
+.menuLine:nth-child(2) {
+  top: 6px;
+}
+
+.menuLine:last-child {
+  top: 12px;
+}
+
+.menuIconOpen .menuLine:first-child {
+  top: 6px;
+  transform: rotate(45deg);
+}
+
+.menuIconOpen .menuLine:nth-child(2) {
+  opacity: 0;
+}
+
+.menuIconOpen .menuLine:last-child {
+  top: 6px;
+  transform: rotate(-45deg);
+}
+
+.menuToggleText {
+  font-size: 11px;
+  font-weight: 600;
 }
 
 .workspaceLabel,
@@ -130,33 +194,137 @@
     padding: 16px 20px 14px;
   }
 
-  .workspaceLabel,
+  .sidebarHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+  }
+
+  .menuToggle {
+    display: inline-flex;
+    min-height: 40px;
+    align-items: center;
+    gap: 9px;
+    padding: 0 11px;
+    border: 1px solid var(--line);
+    background: transparent;
+    color: var(--foreground);
+    cursor: pointer;
+  }
+
+  .sidebarContent {
+    flex: 0 0 auto;
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    visibility: hidden;
+    transition:
+      max-height 220ms ease,
+      opacity 160ms ease,
+      visibility 0s linear 220ms;
+  }
+
+  .sidebarContentOpen {
+    max-height: 440px;
+    padding-top: 12px;
+    border-top: 1px solid var(--line);
+    opacity: 1;
+    visibility: visible;
+    transition:
+      max-height 220ms ease,
+      opacity 160ms ease,
+      visibility 0s;
+  }
+
+  .workspaceLabel {
+    margin: 0 10px 10px;
+  }
+
   .sidebarNote {
     display: none;
   }
 
-  .navigation {
-    margin-top: 14px;
-  }
-
   .navigationList {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: 4px;
+    gap: 0;
   }
 
-  .captureNavigationList {
-    grid-template-columns: repeat(5, minmax(0, 1fr));
+  .mobileMenuList {
+    grid-template-columns: minmax(0, 1fr);
+    border-top: 1px solid var(--line);
   }
 
   .navigationItem {
-    min-height: 38px;
-    justify-content: center;
-    padding: 0 7px;
-    font-size: 11px;
+    position: relative;
+    min-width: 0;
+    min-height: 50px;
+    justify-content: space-between;
+    padding: 0 12px 0 38px;
+    border-bottom: 1px solid var(--line);
+    background: transparent;
+    font-size: 14px;
+  }
+
+  .mobileMenuList .navigationItem::before {
+    position: absolute;
+    top: 50%;
+    left: 13px;
+    width: 8px;
+    height: 8px;
+    border: 1px solid var(--teal);
+    border-radius: 50%;
+    content: "";
+    transform: translateY(-50%);
+  }
+
+  a.navigationItem:hover {
+    border-color: var(--teal);
+    background: #e8eee8;
+  }
+
+  .activeNavigationItem {
+    border-color: var(--line);
+    background: var(--surface);
+    color: var(--foreground);
+    font-weight: 600;
+  }
+
+  .mobileMenuList .activeNavigationItem::before {
+    border-color: var(--teal);
+    background: var(--teal);
   }
 
   .navigationStatus {
-    display: none;
+    display: inline-flex;
+    padding: 3px 6px;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    background: #e7e1d5;
+    font-size: 8px;
+  }
+
+  .sidebarContentOpen .mobileMenuList > li {
+    animation: menuItemIn 160ms ease both;
+  }
+
+  .sidebarContentOpen .mobileMenuList > li:nth-child(2) {
+    animation-delay: 20ms;
+  }
+
+  .sidebarContentOpen .mobileMenuList > li:nth-child(3) {
+    animation-delay: 40ms;
+  }
+
+  .sidebarContentOpen .mobileMenuList > li:nth-child(4) {
+    animation-delay: 60ms;
+  }
+
+  .sidebarContentOpen .mobileMenuList > li:nth-child(5) {
+    animation-delay: 80ms;
+  }
+
+  .sidebarContentOpen .mobileMenuList > li:nth-child(6) {
+    animation-delay: 100ms;
   }
 }
 
@@ -164,5 +332,23 @@
   .sidebarInner {
     padding-right: 16px;
     padding-left: 16px;
+  }
+}
+
+@keyframes menuItemIn {
+  from {
+    opacity: 0;
+    transform: translateY(-2px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sidebarContentOpen .mobileMenuList > li {
+    animation: none;
   }
 }

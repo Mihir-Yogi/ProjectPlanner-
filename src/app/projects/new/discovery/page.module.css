@@ -1,0 +1,38 @@
+.content {
+  width: min(100%, 1256px);
+  margin: 0 auto;
+  padding: 48px 72px 88px;
+}
+
+.backLink {
+  display: inline-flex;
+  min-height: 34px;
+  align-items: center;
+  color: var(--teal);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.backLink:hover {
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+@media (max-width: 1050px) {
+  .content {
+    padding-right: 44px;
+    padding-left: 44px;
+  }
+}
+
+@media (max-width: 720px) {
+  .content {
+    padding: 34px 28px 64px;
+  }
+}
+
+@media (max-width: 480px) {
+  .content {
+    padding: 28px 20px 52px;
+  }
+}
