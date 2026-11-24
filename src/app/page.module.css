@@ -1,118 +1,3 @@
-.appFrame {
-  display: grid;
-  min-height: 100vh;
-  grid-template-columns: 248px minmax(0, 1fr);
-}
-
-.sidebar {
-  border-right: 1px solid var(--line);
-  background: #f0ece3;
-}
-
-.sidebarInner {
-  position: sticky;
-  top: 0;
-  display: flex;
-  height: 100vh;
-  min-height: 560px;
-  flex-direction: column;
-  padding: 28px 20px 24px;
-}
-
-.brand {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  width: fit-content;
-}
-
-.brandMark {
-  display: grid;
-  width: 34px;
-  height: 34px;
-  place-items: center;
-  background: var(--blue);
-  color: var(--background);
-  font-size: 19px;
-  font-weight: 700;
-  letter-spacing: -1px;
-}
-
-.brandName {
-  font-size: 15px;
-  font-weight: 700;
-  letter-spacing: -0.5px;
-}
-
-.workspaceLabel,
-.eyebrow,
-.navigationStatus,
-.sidebarNoteLabel {
-  font-family: var(--font-ibm-plex-mono), monospace;
-  text-transform: uppercase;
-}
-
-.workspaceLabel {
-  margin: 56px 10px 12px;
-  color: var(--muted);
-  font-size: 10px;
-  font-weight: 500;
-  letter-spacing: 1.2px;
-}
-
-.navigationList {
-  display: grid;
-  gap: 4px;
-  list-style: none;
-}
-
-.navigationItem {
-  display: flex;
-  min-height: 42px;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 11px;
-  color: #555d58;
-  font-size: 13px;
-  font-weight: 500;
-}
-
-.activeNavigationItem {
-  background: var(--foreground);
-  color: var(--background);
-}
-
-.navigationStatus {
-  color: var(--muted);
-  font-size: 9px;
-  letter-spacing: 0.5px;
-}
-
-.sidebarNote {
-  margin-top: auto;
-  padding: 16px 10px 4px;
-  border-top: 1px solid var(--line);
-}
-
-.sidebarNoteLabel {
-  color: var(--teal);
-  font-size: 9px;
-  font-weight: 500;
-  letter-spacing: 0.8px;
-}
-
-.sidebarNote p {
-  max-width: 175px;
-  margin-top: 9px;
-  color: #575e59;
-  font-size: 12px;
-  line-height: 1.6;
-}
-
-.main {
-  min-width: 0;
-}
-
 .content {
   width: min(100%, 1256px);
   margin: 0 auto;
@@ -128,9 +13,11 @@
 
 .eyebrow {
   color: var(--teal);
+  font-family: var(--font-ibm-plex-mono), monospace;
   font-size: 10px;
   font-weight: 500;
   letter-spacing: 1px;
+  text-transform: uppercase;
 }
 
 .pageHeading h1 {
@@ -303,48 +190,6 @@
 }
 
 @media (max-width: 720px) {
-  .appFrame {
-    display: flex;
-    flex-direction: column;
-  }
-
-  .sidebar {
-    border-right: 0;
-    border-bottom: 1px solid var(--line);
-  }
-
-  .sidebarInner {
-    position: static;
-    height: auto;
-    min-height: 0;
-    padding: 16px 20px 14px;
-  }
-
-  .workspaceLabel,
-  .sidebarNote {
-    display: none;
-  }
-
-  .navigation {
-    margin-top: 14px;
-  }
-
-  .navigationList {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: 4px;
-  }
-
-  .navigationItem {
-    min-height: 38px;
-    justify-content: center;
-    padding: 0 7px;
-    font-size: 11px;
-  }
-
-  .navigationStatus {
-    display: none;
-  }
-
   .content {
     padding: 42px 28px 64px;
   }
@@ -387,11 +232,6 @@
 }
 
 @media (max-width: 480px) {
-  .sidebarInner {
-    padding-right: 16px;
-    padding-left: 16px;
-  }
-
   .content {
     padding: 36px 20px 52px;
   }
