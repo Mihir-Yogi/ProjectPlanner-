@@ -462,6 +462,163 @@
   line-height: 1.5;
 }
 
+.planPreview {
+  max-width: 880px;
+  margin: 0 auto;
+  padding: 36px 44px 32px;
+}
+
+.planHeader,
+.planSectionHeading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 18px;
+}
+
+.planHeader h2 {
+  margin-top: 9px;
+  font-size: clamp(25px, 3vw, 34px);
+  font-weight: 600;
+  letter-spacing: -1.1px;
+  line-height: 1.15;
+}
+
+.unsavedBadge {
+  flex: 0 0 auto;
+  padding: 7px 10px;
+  border: 1px solid var(--line);
+  color: var(--muted);
+  font-family: var(--font-ibm-plex-mono), monospace;
+  font-size: 9px;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+}
+
+.planField {
+  display: grid;
+  gap: 7px;
+  margin-top: 20px;
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.planTextInput,
+.planTextarea {
+  width: 100%;
+  min-width: 0;
+  border: 1px solid var(--line);
+  border-radius: 0;
+  background: var(--background);
+  color: var(--foreground);
+  font: inherit;
+}
+
+.planTextInput,
+.planTextarea {
+  padding: 11px 12px;
+}
+
+.planTextarea {
+  min-height: 82px;
+  resize: vertical;
+  line-height: 1.5;
+}
+
+.planTextInput:focus,
+.planTextarea:focus {
+  border-color: var(--blue);
+  outline: 2px solid color-mix(in srgb, var(--blue) 22%, transparent);
+  outline-offset: 1px;
+}
+
+.planSection {
+  margin-top: 30px;
+  padding-top: 21px;
+  border-top: 1px solid var(--line);
+}
+
+.planSectionHeading {
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.planSectionHeading h3,
+.planQuestions h3 {
+  margin-top: 5px;
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: -0.4px;
+}
+
+.planSectionHeading > span {
+  flex: 0 0 auto;
+  color: var(--muted);
+  font-size: 10px;
+}
+
+.planScopeList {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.planScopeChoice {
+  display: flex;
+  min-height: 46px;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 12px;
+  border: 1px solid var(--line);
+  color: var(--foreground);
+  font-size: 11px;
+  line-height: 1.45;
+  cursor: pointer;
+}
+
+.planScopeChoice input {
+  flex: 0 0 auto;
+  width: 15px;
+  height: 15px;
+  margin: 1px 0 0;
+  accent-color: var(--blue);
+}
+
+.addScopeRow {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.addScopeRow .secondaryButton {
+  flex: 0 0 auto;
+}
+
+.planQuestions {
+  margin-top: 28px;
+  padding: 18px 20px;
+  border-left: 3px solid var(--teal);
+  background: #e9eee8;
+}
+
+.planQuestions ul {
+  display: grid;
+  gap: 7px;
+  margin: 13px 0 0;
+  padding-left: 18px;
+  color: var(--foreground);
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+.planQuestions > p:last-child {
+  margin-top: 10px;
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.5;
+}
+
 @media (max-width: 900px) {
   .pageHeader {
     align-items: flex-start;
@@ -492,7 +649,8 @@
   }
 
   .question,
-  .review {
+  .review,
+  .planPreview {
     padding: 28px 24px 24px;
   }
 }
@@ -519,8 +677,33 @@
   }
 
   .question,
-  .review {
+  .review,
+  .planPreview {
     padding: 24px 18px 20px;
+  }
+
+  .planScopeList {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .addScopeRow {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .addScopeRow .secondaryButton {
+    min-height: 42px;
+  }
+
+  .planHeader {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .planSectionHeading {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 7px;
   }
 
   .reviewRow {

@@ -53,17 +53,23 @@
   color: var(--background);
   font-size: 13px;
   font-weight: 600;
+  text-decoration: none;
+  transition: background-color 140ms ease;
+}
+
+.createButton:hover {
+  background: #394a7d;
+}
+
+.createButton:focus-visible {
+  outline: 2px solid var(--teal);
+  outline-offset: 3px;
 }
 
 .createButton span {
   font-size: 20px;
   font-weight: 400;
   line-height: 1;
-}
-
-.createButton:disabled {
-  cursor: not-allowed;
-  opacity: 0.58;
 }
 
 .createNote {
@@ -168,6 +174,99 @@
   line-height: 0.85;
 }
 
+.savedProjectsList {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+  margin-top: 20px;
+  padding: 0;
+  list-style: none;
+}
+
+.savedProjectCard {
+  display: flex;
+  min-height: 205px;
+  flex-direction: column;
+  padding: 22px;
+  border: 1px solid var(--line);
+  background: var(--surface);
+  color: var(--foreground);
+  text-decoration: none;
+  transition:
+    border-color 140ms ease,
+    transform 140ms ease;
+}
+
+.savedProjectCard:hover {
+  transform: translateY(-2px);
+  border-color: var(--teal);
+}
+
+.savedProjectCard:focus-visible {
+  outline: 2px solid var(--teal);
+  outline-offset: 3px;
+}
+
+.savedProjectType {
+  color: var(--teal);
+  font-family: var(--font-ibm-plex-mono), monospace;
+  font-size: 9px;
+  letter-spacing: 0.7px;
+  text-transform: uppercase;
+}
+
+.savedProjectCard h3 {
+  margin-top: 12px;
+  font-size: 20px;
+  font-weight: 600;
+  letter-spacing: -0.5px;
+  overflow-wrap: anywhere;
+}
+
+.savedProjectBrief {
+  display: -webkit-box;
+  margin-top: 8px;
+  overflow: hidden;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.55;
+  overflow-wrap: anywhere;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+}
+
+.savedProjectFooter {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: auto;
+  padding-top: 18px;
+  color: var(--muted);
+  font-size: 10px;
+}
+
+.savedProjectFooter span {
+  color: var(--blue);
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.projectsLoading,
+.projectsError {
+  margin-top: 20px;
+  padding: 18px;
+  border: 1px solid var(--line);
+  background: var(--surface);
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.projectsError {
+  border-color: var(--coral);
+  color: var(--foreground);
+}
+
 @media (max-width: 1050px) {
   .content {
     padding-right: 44px;
@@ -182,6 +281,10 @@
 
   .emptyVisual {
     min-height: 180px;
+  }
+
+  .savedProjectsList {
+    grid-template-columns: minmax(0, 1fr);
   }
 
   .visualNumber {
@@ -220,6 +323,11 @@
 
   .emptyVisual {
     min-height: 160px;
+  }
+
+  .savedProjectCard {
+    min-height: 180px;
+    padding: 20px;
   }
 
   .emptyCopy h3 {

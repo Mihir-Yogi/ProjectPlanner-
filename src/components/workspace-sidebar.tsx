@@ -4,19 +4,24 @@ import Link from "next/link";
 import { useState } from "react";
 import styles from "./workspace-shell.module.css";
 
-export type WorkspacePage = "dashboard" | "capture" | "discovery";
+export type WorkspacePage =
+  | "dashboard"
+  | "capture"
+  | "discovery"
+  | "projects";
 
 type WorkspaceSidebarProps = {
   activePage: WorkspacePage;
 };
 
-const futureNavigation = ["Projects", "Templates", "Settings"];
+const futureNavigation = ["Templates", "Settings"];
 
 export function WorkspaceSidebar({ activePage }: WorkspaceSidebarProps) {
   const [isOpen, setIsOpen] = useState(false);
   const isDashboard = activePage === "dashboard";
   const isCapture = activePage === "capture";
   const isDiscovery = activePage === "discovery";
+  const isProjects = activePage === "projects";
   const closeNavigation = () => setIsOpen(false);
 
   return (
@@ -123,6 +128,18 @@ export function WorkspaceSidebar({ activePage }: WorkspaceSidebarProps) {
                 </Link>
               </li>
             )}
+            <li>
+              <Link
+                className={`${styles.navigationItem} ${
+                  isProjects ? styles.activeNavigationItem : ""
+                }`}
+                href="/#recent-projects-title"
+                aria-current={isProjects ? "page" : undefined}
+                onClick={closeNavigation}
+              >
+                Projects
+              </Link>
+            </li>
             {futureNavigation.map((item) => (
               <li key={item}>
                 <span className={styles.navigationItem} aria-disabled="true">

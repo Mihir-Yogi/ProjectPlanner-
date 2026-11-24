@@ -1,6 +1,9 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
+import { jsPDF } from "jspdf";
+import { saveProject } from "@/lib/project-storage";
 import styles from "./guided-discovery-experience.module.css";
 
 type ProjectMode = "idea" | "client";
@@ -924,9 +927,115 @@ function getMultiAnswerSummary(answers: Answers, field: MultiField) {
   return answers.multiAnswers[field].join(", ") || "Skipped";
 }
 
+function getPlanFeatureField(answers: Answers): "ideaGoals" | "clientFeatures" {
+  return answers.mode === "client" ? "clientFeatures" : "ideaGoals";
+}
+
+function getPlanTitle(answers: Answers) {
+  const projectType = getChoiceLabel(PROJECT_TYPE_CHOICES, answers.projectType);
+  const businessType =
+    answers.businessType && answers.businessType !== "Other / not sure"
+      ? answers.businessType
+      : answers.mode === "client"
+        ? "Client project"
+        : "New idea";
+
+  return `${businessType} — ${projectType}`;
+}
+
+function getPlanBrief(answers: Answers) {
+  if (answers.mode === "client") {
+    return (
+      answers.clientBrief.trim() ||
+      answers.multiAnswers.clientOutcomes.join(", ") ||
+      "Clarify the client's goals and first-version requirements."
+    );
+  }
+
+  return (
+    answers.ideaSpark.trim() ||
+    answers.multiAnswers.ideaGoals.join(", ") ||
+    "Explore the idea and confirm the problem it should solve."
+  );
+}
+
+function getPlanOpenQuestions(answers: Answers, scopeItems: string[]) {
+  const questions: string[] = [];
+
+  if (scopeItems.length === 0) {
+    questions.push("Choose the features that belong in the first version.");
+  }
+  if (answers.mode === "idea" && !answers.ideaSpark.trim()) {
+    questions.push("Describe the idea and the problem it should solve.");
+  }
+  if (answers.mode === "client" && !answers.clientBrief.trim()) {
+    questions.push("Confirm the client's request in their own words.");
+  }
+  const audienceField =
+    answers.mode === "client" ? "clientUsers" : "ideaAudience";
+  if (
+    answers.multiAnswers[audienceField].length === 0 ||
+    answers.multiNotDecided[audienceField]
+  ) {
+    questions.push("Confirm who the project is for.");
+  }
+  if (
+    answers.projectType &&
+    isBusinessProject(answers.projectType) &&
+    (!answers.businessType || answers.businessType === "Other / not sure")
+  ) {
+    questions.push("Confirm the type of business.");
+  }
+  if (
+    !answers.frontendStack ||
+    answers.frontendStack === NOT_SURE_STACK_CHOICE.value
+  ) {
+    questions.push("Choose or confirm the frontend approach.");
+  }
+  if (!answers.backendStack || answers.backendStack === NOT_SURE_STACK_CHOICE.value) {
+    questions.push("Choose or confirm the backend approach.");
+  }
+  if (!answers.database || answers.database === NOT_SURE_STACK_CHOICE.value) {
+    questions.push("Choose or confirm how project data will be stored.");
+  }
+  if (
+    answers.multiAnswers.stackServices.length === 0 ||
+    answers.multiNotDecided.stackServices
+  ) {
+    questions.push("Confirm whether any external services are needed.");
+  }
+  if (answers.mode === "client") {
+    if (
+      answers.clientApprover === null ||
+      answers.clientApprover === "Not confirmed yet"
+    ) {
+      questions.push("Confirm who will approve the final result.");
+    }
+    if (
+      answers.multiAnswers.clientConstraints.length === 0 ||
+      answers.multiNotDecided.clientConstraints
+    ) {
+      questions.push("Confirm the client's timeline, budget, and existing tools.");
+    }
+  }
+
+  return questions;
+}
+
 export function GuidedDiscoveryExperience() {
   const [answers, setAnswers] = useState<Answers>(createInitialAnswers);
   const [activeIndex, setActiveIndex] = useState(0);
+  const [showPlanPreview, setShowPlanPreview] = useState(false);
+  const [planTitle, setPlanTitle] = useState("");
+  const [planBrief, setPlanBrief] = useState("");
+  const [planScope, setPlanScope] = useState<string[]>([]);
+  const [scopeDraft, setScopeDraft] = useState("");
+  const [planAnswersSnapshot, setPlanAnswersSnapshot] =
+    useState<Answers | null>(null);
+  const [pdfStatus, setPdfStatus] = useState("");
+  const [savedProjectId, setSavedProjectId] = useState<string | null>(null);
+  const [saveStatus, setSaveStatus] = useState("");
+  const [saveError, setSaveError] = useState("");
   const questionHeadingRef = useRef<HTMLHeadingElement>(null);
   const previousActiveIndex = useRef(activeIndex);
   const steps = createSteps(answers);
@@ -936,6 +1045,10 @@ export function GuidedDiscoveryExperience() {
     ? 100
     : Math.round((activeIndex / steps.length) * 100);
   const progressGroups = Array.from(new Set(steps.map((step) => step.group)));
+  const planFeatureChoices = answers.projectType
+    ? PROJECT_FEATURE_CHOICES[answers.projectType]
+    : [];
+  const planOpenQuestions = getPlanOpenQuestions(answers, planScope);
 
   useEffect(() => {
     if (previousActiveIndex.current !== activeIndex) {
@@ -1101,9 +1214,269 @@ export function GuidedDiscoveryExperience() {
     setActiveIndex((index) => Math.min(steps.length, index + 1));
   }
 
+  function buildPlanPreview() {
+    if (planAnswersSnapshot !== answers) {
+      const featureField = getPlanFeatureField(answers);
+      const initialScope = [...answers.multiAnswers[featureField]];
+      setPlanTitle(getPlanTitle(answers));
+      setPlanBrief(getPlanBrief(answers));
+      setPlanScope(initialScope);
+      setScopeDraft("");
+      setPlanAnswersSnapshot(answers);
+      setSaveStatus("");
+      setSaveError("");
+    }
+    setShowPlanPreview(true);
+  }
+
+  function saveCurrentProject() {
+    if (!answers.mode || !answers.projectType) {
+      setSaveError("Complete the project type and path before saving.");
+      return;
+    }
+
+    const planIsCurrent = planAnswersSnapshot === answers;
+    const featureField = getPlanFeatureField(answers);
+    const scope = planIsCurrent
+      ? planScope
+      : answers.multiAnswers[featureField];
+    const projectType = getChoiceLabel(
+      PROJECT_TYPE_CHOICES,
+      answers.projectType,
+    );
+    const frontend = getChoiceLabel(
+      [
+        ...FRONTEND_CHOICES[answers.projectType],
+        NOT_SURE_STACK_CHOICE,
+      ],
+      answers.frontendStack,
+    );
+    const backend = getChoiceLabel(
+      getBackendChoices(answers.projectType, answers.frontendStack),
+      answers.backendStack,
+    );
+    const database = getChoiceLabel(
+      getDatabaseChoices(answers.projectType, answers.backendStack),
+      answers.database,
+    );
+
+    try {
+      const savedProject = saveProject(
+        {
+          title: planIsCurrent
+            ? planTitle.trim() || "Untitled project"
+            : getPlanTitle(answers),
+          brief: planIsCurrent
+            ? planBrief.trim() || "No brief provided."
+            : getPlanBrief(answers),
+          mode: answers.mode,
+          projectType,
+          businessType: isBusinessProject(answers.projectType)
+            ? answers.businessType
+            : null,
+          scope,
+          stack: {
+            frontend,
+            backend,
+            database,
+            services: getMultiAnswerSummary(answers, "stackServices"),
+          },
+          openQuestions: getPlanOpenQuestions(answers, scope),
+        },
+        savedProjectId ?? undefined,
+      );
+
+      setSavedProjectId(savedProject.id);
+      setSaveStatus("Project saved in this browser.");
+      setSaveError("");
+    } catch (error) {
+      setSaveStatus("");
+      setSaveError(
+        error instanceof Error
+          ? error.message
+          : "The project could not be saved.",
+      );
+    }
+  }
+
+  function downloadPlanPdf() {
+    const planIsCurrent = planAnswersSnapshot === answers;
+    const exportedTitle = planIsCurrent
+      ? planTitle.trim() || "Untitled project"
+      : getPlanTitle(answers);
+    const exportedBrief = planIsCurrent
+      ? planBrief.trim() || "No brief provided."
+      : getPlanBrief(answers);
+    const featureField = getPlanFeatureField(answers);
+    const exportedScope = planIsCurrent
+      ? planScope
+      : answers.multiAnswers[featureField];
+    const projectType = getChoiceLabel(
+      PROJECT_TYPE_CHOICES,
+      answers.projectType,
+    );
+    const frontend = answers.projectType
+      ? getChoiceLabel(
+          [
+            ...FRONTEND_CHOICES[answers.projectType],
+            NOT_SURE_STACK_CHOICE,
+          ],
+          answers.frontendStack,
+        )
+      : "Not selected";
+    const backend = answers.projectType
+      ? getChoiceLabel(
+          getBackendChoices(answers.projectType, answers.frontendStack),
+          answers.backendStack,
+        )
+      : "Not selected";
+    const database = answers.projectType
+      ? getChoiceLabel(
+          getDatabaseChoices(answers.projectType, answers.backendStack),
+          answers.database,
+        )
+      : "Not selected";
+    const openQuestions = getPlanOpenQuestions(answers, exportedScope);
+    const pdf = new jsPDF({ format: "a4", unit: "pt" });
+    const pageWidth = pdf.internal.pageSize.getWidth();
+    const pageHeight = pdf.internal.pageSize.getHeight();
+    const margin = 52;
+    const contentWidth = pageWidth - margin * 2;
+    let cursorY = margin;
+
+    function writeText(
+      text: string,
+      fontSize: number,
+      fontStyle: "normal" | "bold",
+      color: [number, number, number],
+      gapAfter: number,
+    ) {
+      pdf.setFont("helvetica", fontStyle);
+      pdf.setFontSize(fontSize);
+      pdf.setTextColor(...color);
+
+      const wrapped = pdf.splitTextToSize(text, contentWidth);
+      const lines = Array.isArray(wrapped) ? wrapped : [wrapped];
+      const lineHeight = fontSize * 1.4;
+
+      for (const line of lines) {
+        if (cursorY + lineHeight > pageHeight - margin) {
+          pdf.addPage();
+          cursorY = margin;
+        }
+
+        pdf.text(line, margin, cursorY);
+        cursorY += lineHeight;
+      }
+
+      cursorY += gapAfter;
+    }
+
+    function writeSection(title: string, lines: string[]) {
+      writeText(title.toUpperCase(), 11, "bold", [24, 105, 101], 4);
+      for (const line of lines) {
+        writeText(`- ${line}`, 10, "normal", [48, 53, 49], 2);
+      }
+      cursorY += 8;
+    }
+
+    pdf.setProperties({
+      title: exportedTitle,
+      subject: "Project plan draft",
+      author: "ProjectPlanner",
+    });
+    writeText(exportedTitle, 22, "bold", [33, 39, 43], 4);
+    writeText(
+      "ProjectPlanner · Guided discovery plan · Draft",
+      9,
+      "normal",
+      [103, 109, 105],
+      20,
+    );
+    writeSection("Project brief", [exportedBrief]);
+    writeSection("Project context", [
+      answers.mode === "client" ? "Client project" : "Personal idea",
+      `Project type: ${projectType}`,
+      ...(answers.projectType && isBusinessProject(answers.projectType)
+        ? [`Business type: ${answers.businessType ?? "Not specified"}`]
+        : []),
+    ]);
+    writeSection(
+      "First-version scope",
+      exportedScope.length
+        ? exportedScope
+        : ["Features have not been selected yet."],
+    );
+    writeSection("Technology stack", [
+      `Frontend: ${frontend}`,
+      `Backend / API: ${backend}`,
+      `Database / storage: ${database}`,
+      `Other services: ${getMultiAnswerSummary(answers, "stackServices")}`,
+    ]);
+    writeSection(
+      "Still to clarify",
+      openQuestions.length
+        ? openQuestions
+        : ["Confirm the plan details with the project owner before work begins."],
+    );
+    writeText(
+      "Draft only · Not saved in ProjectPlanner",
+      8,
+      "normal",
+      [103, 109, 105],
+      0,
+    );
+
+    const filename =
+      exportedTitle
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/^-|-$/g, "") || "project-plan";
+    pdf.save(`${filename}.pdf`);
+    setPdfStatus("Your project plan PDF download has started.");
+  }
+
+  function updatePlanScope(nextScope: string[]) {
+    setPlanScope(nextScope);
+    setSaveStatus("");
+    setSaveError("");
+  }
+
+  function updatePlanTitle(value: string) {
+    setPlanTitle(value);
+    setSaveStatus("");
+    setSaveError("");
+  }
+
+  function updatePlanBrief(value: string) {
+    setPlanBrief(value);
+    setSaveStatus("");
+    setSaveError("");
+  }
+
+  function addPlanScopeItem() {
+    const item = scopeDraft.trim();
+    if (!item || planScope.includes(item)) {
+      return;
+    }
+
+    updatePlanScope([...planScope, item]);
+    setScopeDraft("");
+  }
+
   function startOver() {
     setAnswers(createInitialAnswers());
     setActiveIndex(0);
+    setShowPlanPreview(false);
+    setPlanTitle("");
+    setPlanBrief("");
+    setPlanScope([]);
+    setScopeDraft("");
+    setPlanAnswersSnapshot(null);
+    setPdfStatus("");
+    setSavedProjectId(null);
+    setSaveStatus("");
+    setSaveError("");
   }
 
   return (
@@ -1119,7 +1492,7 @@ export function GuidedDiscoveryExperience() {
         </div>
         <p className={styles.memoryNote}>
           <span className={styles.memoryDot} aria-hidden="true" />
-          Stays in this page · Not saved
+          {saveStatus ? "Saved in this browser" : "Unsaved changes stay in this page"}
         </p>
       </header>
 
@@ -1153,7 +1526,9 @@ export function GuidedDiscoveryExperience() {
             </ol>
             <p className={styles.progressCount}>
               {isReview
-                ? "Review"
+                ? showPlanPreview
+                  ? "Plan preview"
+                  : "Review"
                 : `Question ${activeIndex + 1} / ${steps.length}`}
             </p>
           </div>
@@ -1177,14 +1552,263 @@ export function GuidedDiscoveryExperience() {
         </div>
 
         {isReview ? (
+          showPlanPreview ? (
+            <section
+              className={styles.planPreview}
+              aria-labelledby="plan-preview-title"
+            >
+              <div className={styles.planHeader}>
+                <div>
+                  <p className={styles.questionEyebrow}>Your first draft</p>
+                  <h2
+                    id="plan-preview-title"
+                    ref={questionHeadingRef}
+                    tabIndex={-1}
+                  >
+                    Project plan preview
+                  </h2>
+                  <p className={styles.reviewIntro}>
+                    Built from your discovery answers. Edit the project title,
+                    brief, and scope before moving ahead.
+                  </p>
+                </div>
+                <span className={styles.unsavedBadge}>Not saved</span>
+              </div>
+
+              <label className={styles.planField}>
+                <span>Project title</span>
+                <input
+                  className={styles.planTextInput}
+                  type="text"
+                  value={planTitle}
+                  onChange={(event) =>
+                    updatePlanTitle(event.currentTarget.value)
+                  }
+                />
+              </label>
+
+              <label className={styles.planField}>
+                <span>Project brief</span>
+                <textarea
+                  className={styles.planTextarea}
+                  rows={3}
+                  value={planBrief}
+                  onChange={(event) =>
+                    updatePlanBrief(event.currentTarget.value)
+                  }
+                />
+              </label>
+
+              <section className={styles.planSection} aria-labelledby="scope-title">
+                <div className={styles.planSectionHeading}>
+                  <div>
+                    <p className={styles.questionEyebrow}>01 / Scope</p>
+                    <h3 id="scope-title">First-version features</h3>
+                  </div>
+                  <span>{planScope.length} selected</span>
+                </div>
+                <div className={styles.planScopeList}>
+                  {planFeatureChoices.map((choice) => (
+                    <label className={styles.planScopeChoice} key={choice.value}>
+                      <input
+                        type="checkbox"
+                        checked={planScope.includes(choice.value)}
+                        onChange={(event) =>
+                          updatePlanScope(
+                            event.currentTarget.checked
+                              ? [...planScope, choice.value]
+                              : planScope.filter((item) => item !== choice.value),
+                          )
+                        }
+                      />
+                      <span>{choice.label}</span>
+                    </label>
+                  ))}
+                  {planScope
+                    .filter(
+                      (item) =>
+                        !planFeatureChoices.some(
+                          (choice) => choice.value === item,
+                        ),
+                    )
+                    .map((item) => (
+                      <label className={styles.planScopeChoice} key={item}>
+                        <input
+                          type="checkbox"
+                          checked
+                          onChange={() =>
+                            updatePlanScope(
+                              planScope.filter((scopeItem) => scopeItem !== item),
+                            )
+                          }
+                        />
+                        <span>{item}</span>
+                      </label>
+                    ))}
+                </div>
+                <div className={styles.addScopeRow}>
+                  <input
+                    className={styles.planTextInput}
+                    type="text"
+                    value={scopeDraft}
+                    aria-label="Add a project feature"
+                    placeholder="Add another feature"
+                    onChange={(event) =>
+                      setScopeDraft(event.currentTarget.value)
+                    }
+                    onKeyDown={(event) => {
+                      if (event.key === "Enter") {
+                        event.preventDefault();
+                        addPlanScopeItem();
+                      }
+                    }}
+                  />
+                  <button
+                    className={styles.secondaryButton}
+                    type="button"
+                    disabled={
+                      !scopeDraft.trim() || planScope.includes(scopeDraft.trim())
+                    }
+                    onClick={addPlanScopeItem}
+                  >
+                    Add feature
+                  </button>
+                </div>
+              </section>
+
+              <section className={styles.planSection} aria-labelledby="stack-title">
+                <div className={styles.planSectionHeading}>
+                  <div>
+                    <p className={styles.questionEyebrow}>02 / Technology</p>
+                    <h3 id="stack-title">Selected stack</h3>
+                  </div>
+                </div>
+                <dl className={styles.reviewList}>
+                  <div className={styles.reviewRow}>
+                    <dt>Frontend</dt>
+                    <dd>
+                      {answers.projectType
+                        ? getChoiceLabel(
+                            [
+                              ...FRONTEND_CHOICES[answers.projectType],
+                              NOT_SURE_STACK_CHOICE,
+                            ],
+                            answers.frontendStack,
+                          )
+                        : "Not selected"}
+                    </dd>
+                  </div>
+                  <div className={styles.reviewRow}>
+                    <dt>Backend / API</dt>
+                    <dd>
+                      {answers.projectType
+                        ? getChoiceLabel(
+                            getBackendChoices(
+                              answers.projectType,
+                              answers.frontendStack,
+                            ),
+                            answers.backendStack,
+                          )
+                        : "Not selected"}
+                    </dd>
+                  </div>
+                  <div className={styles.reviewRow}>
+                    <dt>Database / storage</dt>
+                    <dd>
+                      {answers.projectType
+                        ? getChoiceLabel(
+                            getDatabaseChoices(
+                              answers.projectType,
+                              answers.backendStack,
+                            ),
+                            answers.database,
+                          )
+                        : "Not selected"}
+                    </dd>
+                  </div>
+                  <div className={styles.reviewRow}>
+                    <dt>Other services</dt>
+                    <dd>{getMultiAnswerSummary(answers, "stackServices")}</dd>
+                  </div>
+                </dl>
+              </section>
+
+              <section
+                className={styles.planQuestions}
+                aria-labelledby="questions-title"
+              >
+                <p className={styles.questionEyebrow}>Before you begin</p>
+                <h3 id="questions-title">Still to clarify</h3>
+                {planOpenQuestions.length > 0 ? (
+                  <ul>
+                    {planOpenQuestions.map((question) => (
+                      <li key={question}>{question}</li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p>
+                    No unresolved discovery answers. Confirm the plan details
+                    with the project owner before work begins.
+                  </p>
+                )}
+              </section>
+
+              <div className={styles.reviewActions}>
+                <button
+                  className={styles.secondaryButton}
+                  type="button"
+                  onClick={() => setShowPlanPreview(false)}
+                >
+                  Back to discovery summary
+                </button>
+                <button
+                  className={styles.continueButton}
+                  type="button"
+                  onClick={saveCurrentProject}
+                >
+                  {savedProjectId ? "Save changes" : "Save project"}
+                </button>
+                {savedProjectId && (
+                  <Link
+                    className={styles.textButton}
+                    href={`/projects/${savedProjectId}`}
+                  >
+                    Open saved project
+                  </Link>
+                )}
+                <button
+                  className={styles.textButton}
+                  type="button"
+                  onClick={startOver}
+                >
+                  Start over
+                </button>
+              </div>
+              <p className={styles.reviewNote}>
+                Unsaved changes stay in this page. Saving keeps this draft in
+                this browser only.
+              </p>
+              {saveStatus && (
+                <p className={styles.reviewNote} role="status">
+                  {saveStatus}
+                </p>
+              )}
+              {saveError && (
+                <p className={styles.reviewNote} role="alert">
+                  {saveError}
+                </p>
+              )}
+            </section>
+          ) : (
           <section className={styles.review} aria-labelledby="review-title">
             <p className={styles.questionEyebrow}>Your project notes</p>
             <h2 id="review-title" ref={questionHeadingRef} tabIndex={-1}>
               A clearer first picture.
             </h2>
             <p className={styles.reviewIntro}>
-              This is a working summary, not a saved project. Nothing has been
-              stored.
+              {savedProjectId
+                ? "A project draft has been saved in this browser."
+                : "This is a working summary. Edit the plan, then save it in this browser."}
             </p>
 
             <dl className={styles.reviewList}>
@@ -1315,9 +1939,26 @@ export function GuidedDiscoveryExperience() {
               <button
                 className={styles.secondaryButton}
                 type="button"
-                onClick={() => setActiveIndex(steps.length - 1)}
+                onClick={() => {
+                  setShowPlanPreview(false);
+                  setActiveIndex(steps.length - 1);
+                }}
               >
                 Back to answers
+              </button>
+              <button
+                className={styles.secondaryButton}
+                type="button"
+                onClick={buildPlanPreview}
+              >
+                Edit project plan
+              </button>
+              <button
+                className={styles.continueButton}
+                type="button"
+                onClick={downloadPlanPdf}
+              >
+                Download PDF
               </button>
               <button
                 className={styles.textButton}
@@ -1328,10 +1969,16 @@ export function GuidedDiscoveryExperience() {
               </button>
             </div>
             <p className={styles.reviewNote}>
-              Refreshing this page clears these answers. Saving is not available
-              yet.
+              Unsaved answers clear on refresh. Saved projects remain in this
+              browser only.
             </p>
+            {pdfStatus && (
+              <p className={styles.reviewNote} role="status">
+                {pdfStatus}
+              </p>
+            )}
           </section>
+          )
         ) : currentStep ? (
           <section className={styles.question} aria-labelledby="question-title">
             <div className={styles.questionHeading}>

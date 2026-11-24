@@ -16,12 +16,11 @@ Open [http://localhost:3000](http://localhost:3000).
 ## Current scope
 
 - Next.js App Router with TypeScript
-- Dashboard, Quick Idea Capture, and Guided Project Discovery page UI
+- Dashboard, Quick Idea Capture, and Guided Project Discovery with an editable project plan, local PDF export, and browser-based saving
 - Guided Discovery has separate idea and client paths; frontend, backend, and database choices adapt to earlier answers, and integrations follow selected features
-- Discovery answers stay in page memory only and are cleared on refresh; they are not saved or sent anywhere
-- Saving remains unavailable until frontend integration; unfinished destinations are marked as upcoming
-- The post-save choices to open a project, continue answering questions, or add another idea are deferred until saving and destinations work
-- No backend, project persistence, or sample project data is included
+- Discovery answers and unsaved plan edits stay in page memory and are cleared on refresh; saved projects stay in this browser's storage and are not sent to a server
+- Saved projects appear on the Dashboard and can be reopened in a project details view; the plan PDF is generated locally when requested
+- No backend, server-side persistence, cross-device sync, or sample project data is included
 
 ## Checks
 

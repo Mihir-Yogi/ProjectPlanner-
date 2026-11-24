@@ -1,4 +1,6 @@
+import Link from "next/link";
 import { WorkspaceShell } from "@/components/workspace-shell";
+import { DashboardProjects } from "./dashboard-projects";
 import styles from "./page.module.css";
 
 export default function DashboardPage() {
@@ -15,49 +17,21 @@ export default function DashboardPage() {
           </div>
 
           <div className={styles.createAction}>
-            <button
+            <Link
               className={styles.createButton}
-              type="button"
-              disabled
+              href="/projects/new/discovery"
               aria-describedby="create-project-note"
             >
               <span aria-hidden="true">+</span>
               New project
-            </button>
+            </Link>
             <span className={styles.createNote} id="create-project-note">
-              Available after frontend integration
+              Start with a clear project plan
             </span>
           </div>
         </header>
 
-        <section
-          className={styles.projectsSection}
-          aria-labelledby="recent-projects-title"
-        >
-          <div className={styles.sectionHeader}>
-            <div>
-              <p className={styles.eyebrow}>Keep your momentum</p>
-              <h2 id="recent-projects-title">Recent projects</h2>
-            </div>
-            <span className={styles.projectCount}>0 projects</span>
-          </div>
-
-          <div className={styles.emptyState}>
-            <div className={styles.emptyCopy}>
-              <p className={styles.emptyKicker}>The next chapter</p>
-              <h3>Big ideas. Clear plans.</h3>
-              <p>
-                No projects yet. When Idea Capture is ready, your first project
-                will show up here.
-              </p>
-            </div>
-            <div className={styles.emptyVisual} aria-hidden="true">
-              <span className={styles.visualLabel}>Projects</span>
-              <span className={styles.visualNumber}>00</span>
-              <span className={styles.visualFooter}>Start here</span>
-            </div>
-          </div>
-        </section>
+        <DashboardProjects />
       </div>
     </WorkspaceShell>
   );
