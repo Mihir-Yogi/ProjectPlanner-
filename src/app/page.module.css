@@ -1,0 +1,443 @@
+.appFrame {
+  display: grid;
+  min-height: 100vh;
+  grid-template-columns: 248px minmax(0, 1fr);
+}
+
+.sidebar {
+  border-right: 1px solid var(--line);
+  background: #f0ece3;
+}
+
+.sidebarInner {
+  position: sticky;
+  top: 0;
+  display: flex;
+  height: 100vh;
+  min-height: 560px;
+  flex-direction: column;
+  padding: 28px 20px 24px;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: fit-content;
+}
+
+.brandMark {
+  display: grid;
+  width: 34px;
+  height: 34px;
+  place-items: center;
+  background: var(--blue);
+  color: var(--background);
+  font-size: 19px;
+  font-weight: 700;
+  letter-spacing: -1px;
+}
+
+.brandName {
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+}
+
+.workspaceLabel,
+.eyebrow,
+.navigationStatus,
+.sidebarNoteLabel {
+  font-family: var(--font-ibm-plex-mono), monospace;
+  text-transform: uppercase;
+}
+
+.workspaceLabel {
+  margin: 56px 10px 12px;
+  color: var(--muted);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 1.2px;
+}
+
+.navigationList {
+  display: grid;
+  gap: 4px;
+  list-style: none;
+}
+
+.navigationItem {
+  display: flex;
+  min-height: 42px;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 11px;
+  color: #555d58;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.activeNavigationItem {
+  background: var(--foreground);
+  color: var(--background);
+}
+
+.navigationStatus {
+  color: var(--muted);
+  font-size: 9px;
+  letter-spacing: 0.5px;
+}
+
+.sidebarNote {
+  margin-top: auto;
+  padding: 16px 10px 4px;
+  border-top: 1px solid var(--line);
+}
+
+.sidebarNoteLabel {
+  color: var(--teal);
+  font-size: 9px;
+  font-weight: 500;
+  letter-spacing: 0.8px;
+}
+
+.sidebarNote p {
+  max-width: 175px;
+  margin-top: 9px;
+  color: #575e59;
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+.main {
+  min-width: 0;
+}
+
+.content {
+  width: min(100%, 1256px);
+  margin: 0 auto;
+  padding: 68px 72px 88px;
+}
+
+.pageHeader {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 32px;
+}
+
+.eyebrow {
+  color: var(--teal);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 1px;
+}
+
+.pageHeading h1 {
+  margin-top: 14px;
+  font-size: clamp(48px, 6vw, 72px);
+  font-weight: 700;
+  letter-spacing: -4px;
+  line-height: 0.98;
+}
+
+.pageDescription {
+  margin-top: 17px;
+  color: var(--muted);
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+.createAction {
+  display: grid;
+  justify-items: end;
+  gap: 8px;
+  padding-bottom: 3px;
+}
+
+.createButton {
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+  gap: 9px;
+  padding: 0 16px;
+  border: 0;
+  background: var(--blue);
+  color: var(--background);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.createButton span {
+  font-size: 20px;
+  font-weight: 400;
+  line-height: 1;
+}
+
+.createButton:disabled {
+  cursor: not-allowed;
+  opacity: 0.58;
+}
+
+.createNote {
+  color: var(--muted);
+  font-size: 10px;
+}
+
+.projectsSection {
+  margin-top: 64px;
+}
+
+.sectionHeader {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 20px;
+  padding-bottom: 17px;
+  border-bottom: 1px solid var(--line);
+}
+
+.sectionHeader h2 {
+  margin-top: 8px;
+  font-size: 23px;
+  font-weight: 600;
+  letter-spacing: -0.7px;
+}
+
+.projectCount {
+  display: inline-flex;
+  min-height: 30px;
+  align-items: center;
+  padding: 0 10px;
+  background: var(--yellow);
+  color: var(--foreground);
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.emptyState {
+  display: grid;
+  min-height: 286px;
+  grid-template-columns: minmax(0, 1fr) 224px;
+  align-items: center;
+  gap: 40px;
+  margin-top: 20px;
+  padding: 38px 44px;
+  background: var(--blue);
+  color: var(--background);
+}
+
+.emptyKicker,
+.visualLabel,
+.visualFooter {
+  font-family: var(--font-ibm-plex-mono), monospace;
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.emptyKicker {
+  margin: 0;
+  color: var(--background);
+}
+
+.emptyCopy h3 {
+  max-width: 500px;
+  margin-top: 15px;
+  font-size: clamp(34px, 4vw, 48px);
+  font-weight: 700;
+  letter-spacing: -2px;
+  line-height: 1.04;
+}
+
+.emptyCopy > p:last-child {
+  max-width: 410px;
+  margin-top: 12px;
+  color: var(--background);
+  font-size: 14px;
+  line-height: 1.7;
+}
+
+.emptyVisual {
+  display: grid;
+  min-height: 210px;
+  align-content: center;
+  justify-items: center;
+  gap: 12px;
+  border: 1px solid rgb(245 241 232 / 45%);
+}
+
+.visualLabel,
+.visualFooter {
+  color: var(--background);
+}
+
+.visualNumber {
+  color: var(--yellow);
+  font-size: clamp(88px, 10vw, 124px);
+  font-weight: 700;
+  letter-spacing: -9px;
+  line-height: 0.85;
+}
+
+@media (max-width: 1050px) {
+  .content {
+    padding-right: 44px;
+    padding-left: 44px;
+  }
+
+  .emptyState {
+    grid-template-columns: minmax(0, 1fr) 180px;
+    gap: 24px;
+    padding: 32px;
+  }
+
+  .emptyVisual {
+    min-height: 180px;
+  }
+
+  .visualNumber {
+    font-size: 96px;
+  }
+}
+
+@media (max-width: 720px) {
+  .appFrame {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .sidebar {
+    border-right: 0;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .sidebarInner {
+    position: static;
+    height: auto;
+    min-height: 0;
+    padding: 16px 20px 14px;
+  }
+
+  .workspaceLabel,
+  .sidebarNote {
+    display: none;
+  }
+
+  .navigation {
+    margin-top: 14px;
+  }
+
+  .navigationList {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 4px;
+  }
+
+  .navigationItem {
+    min-height: 38px;
+    justify-content: center;
+    padding: 0 7px;
+    font-size: 11px;
+  }
+
+  .navigationStatus {
+    display: none;
+  }
+
+  .content {
+    padding: 42px 28px 64px;
+  }
+
+  .pageHeader {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 24px;
+  }
+
+  .pageHeading h1 {
+    letter-spacing: -2.8px;
+  }
+
+  .createAction {
+    justify-items: start;
+  }
+
+  .projectsSection {
+    margin-top: 58px;
+  }
+
+  .emptyState {
+    grid-template-columns: minmax(0, 1fr) 150px;
+    gap: 20px;
+    padding: 28px;
+  }
+
+  .emptyVisual {
+    min-height: 160px;
+  }
+
+  .emptyCopy h3 {
+    font-size: 33px;
+  }
+
+  .visualNumber {
+    font-size: 82px;
+  }
+}
+
+@media (max-width: 480px) {
+  .sidebarInner {
+    padding-right: 16px;
+    padding-left: 16px;
+  }
+
+  .content {
+    padding: 36px 20px 52px;
+  }
+
+  .pageHeading h1 {
+    font-size: 48px;
+  }
+
+  .pageDescription {
+    max-width: 300px;
+    font-size: 14px;
+  }
+
+  .sectionHeader h2 {
+    font-size: 20px;
+  }
+
+  .emptyState {
+    min-height: 0;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 20px;
+    padding: 24px;
+  }
+
+  .emptyVisual {
+    display: flex;
+    min-height: 0;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 12px;
+  }
+
+  .emptyCopy h3 {
+    max-width: 280px;
+    font-size: 32px;
+  }
+
+  .visualNumber {
+    font-size: 62px;
+    letter-spacing: -5px;
+  }
+
+  .visualLabel,
+  .visualFooter {
+    font-size: 8px;
+    letter-spacing: 0.4px;
+  }
+}
